@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tent Control</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+
+<body>
+    <div id="dot"></div>
+    <div class="toolbar">Tent Control</div>
+    <div id="container">
+        <div class="card">
+            <div class="img" id="bulb" onclick="toggleLight()">
+                <img src="icons/power-off-solid.svg">
+            </div>
+            <label class="label">Lights</label>
+        </div>
+
+        <div class="card">
+            <div class="img" onclick="toggleVent()">
+                <img src="icons/fan-solid.svg" id="ventimg">
+            </div>
+            <label class="label">Ventilation</label>
+        </div>
+
+        <div class="card">
+            <div class="img">
+                <img src="icons/thermometer-quarter-solid.svg">
+            </div>
+            <label class="label">Temperature</label>
+            <div class="value" id="temp">23˚C</div>
+        </div>
+
+        <div class="card">
+            <div class="img">
+                <img src="icons/tint-solid.svg">
+            </div>
+            <label class="label">Humidity</label>
+            <div class="value" id="humidity">51%</div>
+        </div>
+
+        <div class="card">
+            <div class="img">
+                <img src="icons/lightbulb-regular.svg">
+            </div>
+            <label class="label">Light Intensity</label>
+            <div class="value" id="lux">200lx</div>
+        </div>
+    </div>
+
+    <script>
+        console.log("Connecting to web socket")
+        ws = new WebSocket('ws://192.168.0.184:81/');
+        initialConn = true
+        lastRcvData = {}
+        ws.onopen = function () {
+            console.log('[open] WebSocket Client Connected');
+            ws.send('info');
+        };
+
+        ws.onclose = function (event) {
+            if (event.wasClean) {
+                console.log(`[close] Connection closed cleanly, code=${event.code} reason=${event.reason}`);
+            } else {
+                // e.g. server process killed or network down
+                // event.code is usually 1006 in this case
+                console.log('[close] Connection died');
+            }
+
+            document.getElementById("dot").style.backgroundColor = "orange"
+            document.getElementById("container").style.filter = "blur(5px)"
+        };
+
+        ws.onmessage = function (e) {
+            console.log(`[onmessage] Received: "${e.data}"`);
+
+            if (initialConn) {
+                initialConn = false
+                document.getElementById("dot").style.backgroundColor = "green"
+                document.getElementById("container").style.filter = "none"
+            }
+
+            data = JSON.parse(e.data)
+            lastRcvData = data
+            document.getElementById("temp").innerHTML = data.temp + "˚C"
+            document.getElementById("humidity").innerHTML = data.humid + "%"
+            document.getElementById("lux").innerHTML = data.lux + "lx"
+
+            ventImg = document.getElementById("ventimg")
+            if (data.vent > 0) {
+                ventImg.className = "spin"
+            } else {
+                ventImg.className = ""
+            }
+
+            bulb = document.getElementById("bulb")
+            if (data.light > 0) {
+                bulb.classList.add("glow")
+            } else {
+                bulb.className = "img"
+            }
+        };
+
+        function sendCMD(cmd) {
+            ws.send(cmd)
+        }
+
+        function toggleLight() {
+            if (lastRcvData.light > 0) {
+                sendCMD("lightoff")
+            } else {
+                sendCMD("lighton")
+            }
+        }
+
+        function toggleVent() {
+            if (lastRcvData.vent > 0) {
+                sendCMD("ventoff")
+            } else {
+                sendCMD("venton")
+            }
+        }
+    </script>
+</body>
+
+</html>

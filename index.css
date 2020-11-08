@@ -1,0 +1,118 @@
+@font-face {
+    font-family: 'Alphii Regular';
+    src: url("fonts/Alphii Regular.ttf");
+}
+
+@font-face {
+    font-family: 'Freight Sans Light';
+    src: url("fonts/Freight Sans Light.otf");
+}
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body, html {
+    height: 100%;
+    background-color: #f3f5fa;
+    font-family: 'Alphii Regular';
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+#dot {
+    height: 10px;
+    width: 10px;
+    background: orange;
+    border-radius: 50%;
+    position: absolute;
+    top: 38px;
+    right: 8px;
+}
+
+.toolbar {
+    width: 100%;
+    background-color: white;
+    height: 56px;
+    font-size: 25px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#container {
+    padding: 8px 24px 16px 24px;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: center;
+    flex-grow: 1;
+    filter: blur(5px);
+    transition: filter .35s linear;
+}
+
+#container .card {
+    padding: 16px;
+    background-color: white;
+    display: inline-block;
+    border-radius: 20px;
+    font-family: 'Freight Sans Light';
+    min-width: 115px;
+    margin: 8px auto;
+}
+
+@keyframes spin {
+    from {transform:rotate(0deg);}
+    to {transform:rotate(360deg);}
+}
+
+.card .img {
+    height: 40px;
+    width: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    background-color: #f3f5fa;
+}
+
+.card .img img {
+    height: 24px;
+    width: 24px;
+}
+
+.card .img img.spin {
+    animation: spin 2s linear infinite;
+}
+
+.card .label{
+    margin-top: 16px;
+    display: block;
+    font-size: 18px;
+}
+
+.card .value{
+    margin-top: 8px;
+    display: block;
+    font-size: 20px;
+}
+
+.glow {
+    background-color: #fbd076 !important;
+    -webkit-animation: glow 1s ease-in-out infinite alternate;
+    -moz-animation: glow 1s ease-in-out infinite alternate;
+    animation: glow 1s ease-in-out infinite alternate;
+    transition: background 0.35s linear;
+}
+
+@keyframes glow {
+    from {
+        box-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #f9a64c, 0 0 40px #f9a64c, 0 0 50px #f9a64c, 0 0 60px #f9a64c, 0 0 70px #f9a64c;
+    }
+    to {
+        box-shadow: 0 0 20px #fff, 0 0 30px #fbd076, 0 0 40px #fbd076, 0 0 50px #fbd076, 0 0 60px #fbd076, 0 0 70px #fbd076, 0 0 80px #fbd076;
+    }
+}
